@@ -11,7 +11,7 @@ import CoreData
 struct ContentView: View {
     
 
-    //    @Environment(\.managedObjectContext) private var viewContext
+        @Environment(\.managedObjectContext) private var viewContext
     //
     //    @FetchRequest(
     //        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
@@ -74,7 +74,7 @@ struct ContentView: View {
                 Image(systemName: "plus")
             }//:ADD BUTTON
                 .sheet(isPresented: $showingAddTodoView){
-                    AddTodoView()
+                    AddTodoView().environment(\.managedObjectContext, self.viewContext)
                 }
             )
         }//: NAVIGATION
