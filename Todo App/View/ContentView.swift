@@ -61,30 +61,37 @@ struct ContentView: View {
     var body: some View {
         
         NavigationView {
-            List {
-                ForEach(self.todos, id:\.self){todo in
-                    HStack{
-                        Text(todo.name ?? "Unkown")
-                        
-                        Spacer()
-                        
-                        Text(todo.priority ?? "Unkown")
-                    }//:HSTACK
-                }//:FOREACH
-                .onDelete(perform: deleteTodo(offsets:))
-            }//:LIST
-            .navigationBarTitle("Todo", displayMode: .inline)
-            .navigationBarItems(leading: EditButton(),trailing:
-                                    Button(action: {
-                //: Show add todo view
-                self.showingAddTodoView.toggle()
-            }){
-                Image(systemName: "plus")
-            }//:ADD BUTTON
-                .sheet(isPresented: $showingAddTodoView){
-                    AddTodoView().environment(\.managedObjectContext, self.viewContext)
-                }
+            ZStack {
+                List {
+                    ForEach(self.todos, id:\.self){todo in
+                        HStack{
+                            Text(todo.name ?? "Unkown")
+                            
+                            Spacer()
+                            
+                            Text(todo.priority ?? "Unkown")
+                        }//:HSTACK
+                    }//:FOREACH
+                    .onDelete(perform: deleteTodo(offsets:))
+                }//:LIST
+                .navigationBarTitle("Todo", displayMode: .inline)
+                .navigationBarItems(leading: EditButton(),trailing:
+                                        Button(action: {
+                    //: Show add todo view
+                    self.showingAddTodoView.toggle()
+                }){
+                    Image(systemName: "plus")
+                }//:ADD BUTTON
+                    .sheet(isPresented: $showingAddTodoView){
+                        AddTodoView().environment(\.managedObjectContext, self.viewContext)
+                    }
             )
+                
+            // MARK: - NO TODO ITEM
+                if todos.count == 0 {
+                    EmptyListView()
+                }
+            }//: ZSTACK
         }//: NAVIGATION
     }
 }
