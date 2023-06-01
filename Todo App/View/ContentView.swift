@@ -10,13 +10,13 @@ import CoreData
 
 struct ContentView: View {
     
-
-        @Environment(\.managedObjectContext) private var viewContext
-    //
-    //    @FetchRequest(
-    //        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-    //        animation: .default)
-    //    private var items: FetchedResults<Item>
+    
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Todo.name, ascending: true)],
+        animation: .default)
+    private var todos: FetchedResults<Todo>
     
     //    private func addItem() {
     //        withAnimation {
@@ -33,19 +33,19 @@ struct ContentView: View {
     //        }
     //    }
     //
-    //    private func deleteItems(offsets: IndexSet) {
-    //        withAnimation {
-    //            offsets.map { items[$0] }.forEach(viewContext.delete)
-    //
-    //            do {
-    //                try viewContext.save()
-    //            } catch {
-    //
-    //                let nsError = error as NSError
-    //                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-    //            }
-    //        }
-    //    }
+        private func deleteTodo(offsets: IndexSet) {
+            withAnimation {
+                offsets.map { todos[$0] }.forEach(viewContext.delete)
+    
+                do {
+                    try viewContext.save()
+                } catch {
+    
+                    let nsError = error as NSError
+                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                }
+            }
+        }
     //}
     //
     //private let itemFormatter: DateFormatter = {
@@ -61,13 +61,21 @@ struct ContentView: View {
     var body: some View {
         
         NavigationView {
-            List(/*@START_MENU_TOKEN@*/0 ..< 5/*@END_MENU_TOKEN@*/) { item in
-                Text("Hello")
-                
+            List {
+                ForEach(self.todos, id:\.self){todo in
+                    HStack{
+                        Text(todo.name ?? "Unkown")
+                        
+                        Spacer()
+                        
+                        Text(todo.priority ?? "Unkown")
+                    }//:HSTACK
+                }//:FOREACH
+                .onDelete(perform: deleteTodo(offsets:))
             }//:LIST
             .navigationBarTitle("Todo", displayMode: .inline)
-            .navigationBarItems(trailing:
-            Button(action: {
+            .navigationBarItems(leading: EditButton(),trailing:
+                                    Button(action: {
                 //: Show add todo view
                 self.showingAddTodoView.toggle()
             }){
@@ -80,7 +88,7 @@ struct ContentView: View {
         }//: NAVIGATION
     }
 }
-    
+
 
 
 // MARK: - PREVIEW
